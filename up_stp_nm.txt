@@ -1,0 +1,21 @@
+   #!/bin/bash
+
+   # Получаем имя интерфейса и его состояние
+   INTERFACE="$1"
+   STATUS="$2"
+
+   # Устанавливаем приоритет STP
+   STP_PRIORITY=32768  # Задайте желаемый приоритет
+
+   # Убедимся, что это событие "up" и интерфейс - SW1-HQ
+   if [ "$STATUS" = "up" ] && [ "$INTERFACE" = "SW1-HQ" ]; then
+       # Включаем STP для моста SW1-HQ в Open vSwitch
+       ovs-vsctl set Bridge SW1-HQ stp_enable=true
+       ovs-vsctl set bridge SW1-HQ stp_priority=$STP_PRIORITY
+
+       # Сообщение в лог
+       echo "STP включен для моста SW1-HQ с приоритетом $STP_PRIORITY" >> /var/log/ovs-stp.log
+   fi
+
+
+ sudo chmod +x /etc/NetworkManager/dispatcher.d/99-stp-ovs-up.sh
